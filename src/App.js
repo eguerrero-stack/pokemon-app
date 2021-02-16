@@ -4,6 +4,8 @@ import Search from "./Search"
 import Pagination from "./Pagination"
 import axios from 'axios';
 import { Container,Card } from "react-bootstrap";
+import "./App.css"
+import background from './images/pokeBackground.jpg'
 function App() {
   const [currentPageUrl,setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
   const [pokemonNames, setPokemonNames] = useState([]);
@@ -82,10 +84,17 @@ useEffect(() => {
   
 if(isLoading) return "Loading...";
 
-if(isSearching) return (
-
-<>
-<Card className="pokemonInfo">
+if(isSearching) {
+  console.log(pokemonData)
+}
+  return (
+    <>  
+    <div className="bgImg">
+    <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
+    <Container fluid>
+    {isSearching ? 
+      <>
+          <Card className="pokemonInfo">
            <Card.Img variant="top" src={pokemonData.sprites? pokemonData.sprites.front_default : "Nothing here"} />
            <Card.Body>
              <Card.Title>{pokemonData.name}</Card.Title>
@@ -95,22 +104,18 @@ if(isSearching) return (
              
            </Card.Body>
          </Card>
-</>
-
-
-)
-
-  return (
-    <>  
-    <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
-    <Container fluid>
-
+      </>
+: 
+<>
           <PokemonList pokemonNames={pokemonNames} pokemonData={pokemonData} />
-    </Container>
           <Pagination 
           goToNextPage={nextPageUrl ? goToNextPage : null}           
           goToPrevPage={prevPageUrl ? goToPrevPage : null}
           />
+</>
+}
+    </Container>
+    </div>
     </>
               );
 }
