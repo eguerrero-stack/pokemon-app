@@ -17,15 +17,15 @@ export default function PokemonList({pokemonNames, pokemonData}) {
     return (
         <Row>
         {pokemonNames.map(name => (
-            <Col key={name} className="col" sm={3}>
-           <Card >
+            <Col key={name} className="col"  xs={3} >
+           <Card className="pokeTiles">
            {/* <Card.Img variant="top" src={pokemonData.forEach(data => data.name = name ? data.sprites.front_default : "" )} /> */}
            <Card.Body>
              <Card.Title>{name}</Card.Title>
              <Card.Text>
                Pokemon Description
              </Card.Text>
-             <Button variant="primary">Go somewhere</Button>
+             <Button variant="success">Add</Button>
            </Card.Body>
          </Card>
          </Col>

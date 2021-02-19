@@ -1,0 +1,10 @@
+.header {
+  text-align: center;
+  margin: auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.jumbotron {
+  background-color: firebrick;
+  border: 5px solid brown;
+}

@@ -2,10 +2,15 @@ import React, {useState,useEffect} from 'react';
 import  PokemonList  from "./PokemonList";
 import Search from "./Search"
 import Pagination from "./Pagination"
+import Header from "./Header";
+import SearchResult from "./SearchResult";
 import axios from 'axios';
 import { Container,Card } from "react-bootstrap";
+
 import "./App.css"
-import background from './images/pokeBackground.jpg'
+// import background from './images/pokeBackground.jpg'
+
+
 function App() {
   const [currentPageUrl,setCurrentPageUrl] = useState("https://pokeapi.co/api/v2/pokemon");
   const [pokemonNames, setPokemonNames] = useState([]);
@@ -90,28 +95,20 @@ if(isSearching) {
   return (
     <>  
     <div className="bgImg">
+      <Header/>
     <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
     <Container fluid>
     {isSearching ? 
       <>
-          <Card className="pokemonInfo">
-           <Card.Img variant="top" src={pokemonData.sprites? pokemonData.sprites.front_default : "Nothing here"} />
-           <Card.Body>
-             <Card.Title>{pokemonData.name}</Card.Title>
-             <Card.Text>
-               Pokemon Description
-             </Card.Text>
-             
-           </Card.Body>
-         </Card>
+        <SearchResult pokemonData={pokemonData}/>
       </>
 : 
 <>
-          <PokemonList pokemonNames={pokemonNames} pokemonData={pokemonData} />
           <Pagination 
           goToNextPage={nextPageUrl ? goToNextPage : null}           
           goToPrevPage={prevPageUrl ? goToPrevPage : null}
           />
+          <PokemonList pokemonNames={pokemonNames} pokemonData={pokemonData} />
 </>
 }
     </Container>

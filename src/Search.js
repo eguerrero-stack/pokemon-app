@@ -8,14 +8,17 @@ const [searchPokemon,setSearchPokemon] = useState("");
 
 const search = () => {
     console.log(searchPokemon)
+    let searchable = searchPokemon.toLowerCase();
+    
     setIsSearching(true);
-    axios.get(`https://pokeapi.co/api/v2/pokemon/${searchPokemon}`).then(res => {
+    axios.get(`https://pokeapi.co/api/v2/pokemon/${searchable}`).then(res => {
         
         setPokemonData(res.data)               
     },
     (error => console.log(error))
     )
 }
+
 useEffect(() => {
     if(searchPokemon.length === 0){
         setIsSearching(false);
