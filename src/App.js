@@ -6,7 +6,7 @@ import Header from "./Header";
 import SearchResult from "./SearchResult";
 import axios from 'axios';
 import { Container,Card } from "react-bootstrap";
-
+import {Link} from "react-router-dom";
 import "./App.css"
 // import background from './images/pokeBackground.jpg'
 
@@ -17,7 +17,6 @@ function App() {
   const [nextPageUrl, setNextPageUrl] = useState(null);
   const [prevPageUrl, setPrevPageUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [pokemonDataUrls,setPokemonDataUrls] = useState([]);
   const [pokemonData, setPokemonData] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   let cancel;
@@ -96,6 +95,9 @@ if(isSearching) {
     <>  
     <div className="bgImg">
       <Header/>
+      
+      <Link to="/battle">Battle</Link>
+      
     <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
     <Container fluid>
     {isSearching ? 
