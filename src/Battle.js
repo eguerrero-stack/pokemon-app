@@ -2,6 +2,7 @@ import React,{useEffect, useState} from 'react'
 
 import {Jumbotron, Button, Card} from "react-bootstrap";
 import PokeBattleCards from "./PokeBattleCards";
+import "./Battle.css"
 import axios from "axios"
 export default function Battle() {
 
@@ -96,14 +97,25 @@ useEffect(() => {
     <Button variant="primary" onClick={choosePokemon}>Choose Pokemon</Button>
   </div>
 </Jumbotron>
-<div>
+<div className="battleBg">
+<div style={{textAlign:'center'}} >
 <Button variant="danger" onClick={startBattle}>Battle!</Button>
 </div>
 
-{pokemonChosen ? <PokeBattleCards pokeMoves={pokeMoves} setPokeMoves={setPokeMoves} setSecondPokeMoves={setSecondPokeMoves} secondPokeMoves={secondPokeMoves} pokemonChosen={pokemonChosen} pokemonInfo={pokemonInfo ? pokemonInfo : null} pokemonTwoInfo={pokemonTwoInfo ? pokemonTwoInfo : null}/> : <h1 className="align-items center">Waiting for Battle...</h1>}
+{pokemonChosen ? 
+<PokeBattleCards 
+    pokeMoves={pokeMoves} 
+    setPokeMoves={setPokeMoves} 
+    setSecondPokeMoves={setSecondPokeMoves} 
+    secondPokeMoves={secondPokeMoves} 
+    pokemonChosen={pokemonChosen} 
+    pokemonInfo={pokemonInfo ? pokemonInfo : null} 
+    pokemonTwoInfo={pokemonTwoInfo ? pokemonTwoInfo : null}/> 
+    : <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>}
 
 
 
+        </div>
         </div>
     )
 }

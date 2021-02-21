@@ -42,7 +42,7 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
         randomMoves(pokemonTwoInfo.moves.length, false)
         
       }
-      // console.log('pokemoves:', pokeMoves)
+      console.log('pokemoves:', pokeMoves)
         
 // debugger;
     },[pokemonInfo])
@@ -94,11 +94,11 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
          </Card>
            </Col>
            <Col xs={3}>
-           <Card.Img variant="top" className="firstImage" src={pokemonInfo.sprites? pokemonInfo.sprites.back_default : "Nothing here"} />
+           <Card.Img variant="top" className="firstImage" src={pokemonInfo.sprites? pokemonInfo.sprites.front_default : "Nothing here"} />
            <Card.Title>{ pokemonInfo.name ? pokemonInfo.name.toUpperCase() : null }</Card.Title>
              {pokeMoves.length > 0? 
-             <Table striped bordered hover size="sm">
-            <tbody>
+             <Table striped bordered hover size="sm" variant="light">
+            <tbody className="abilities">
                 <tr>
                  <td> {pokeMoves[0].name}</td>
                   </tr>
@@ -119,8 +119,8 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
          <Card.Img variant="top" src={pokemonTwoInfo.sprites? pokemonTwoInfo.sprites.front_default : "Nothing here"} />
                 <Card.Title>{pokemonTwoInfo.name ? pokemonTwoInfo.name.toUpperCase(): null}</Card.Title>
                 {secondPokeMoves.length > 0 ? 
-             <Table striped bordered hover size="sm">
-            <tbody>
+             <Table striped bordered hover size="sm" variant="light">
+            <tbody className="abilities">
             <tr>
                  <td> {secondPokeMoves[0].name}</td>
                   </tr>

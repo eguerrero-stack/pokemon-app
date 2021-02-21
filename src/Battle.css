@@ -1,0 +1,13 @@
+.jumbotron {
+  text-align: center;
+  margin: 0;
+}
+
+.battleBg {
+  background-image: url(./images/pokeball.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -1;
+  min-width: 100vh;
+  min-height: 100vh;
+}
