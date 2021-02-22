@@ -9,7 +9,7 @@ const [searchPokemon,setSearchPokemon] = useState("");
 const search = () => {
     console.log(searchPokemon)
     let searchable = searchPokemon.toLowerCase();
-    
+    if(searchable === "") return
     setIsSearching(true);
     axios.get(`https://pokeapi.co/api/v2/pokemon/${searchable}`).then(res => {
         

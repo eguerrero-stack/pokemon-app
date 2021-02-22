@@ -1,9 +1,29 @@
 .firstCard {
   margin: auto;
   border: 5px black;
+  padding: 0;
+  background-color: transparent;
+  width: 50%;
 }
 
 .secondCard {
   margin: auto;
   border: 5px black;
+  padding: 0;
+  background-color: transparent;
+  width: 50%;
+}
+
+.firstImage {
+  transform: scaleX(-1);
+}
+
+.abilities {
+  background-color: bisque;
+  border: black;
+  border-width: 5px;
+}
+
+.stats {
+  padding: 0;
 }
