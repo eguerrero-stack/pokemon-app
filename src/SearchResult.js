@@ -10,7 +10,7 @@ export default function searchResult({pokemonData}) {
              <Card className="pokemonInfo">
            <Card.Img variant="top" src={pokemonData.sprites? pokemonData.sprites.front_default : "Nothing here"} />
            <Card.Body>
-             <Card.Title>{pokemonData.name.toUpperCase()}</Card.Title>
+             <Card.Title>{pokemonData.name ? pokemonData.name.toUpperCase() : ""}</Card.Title>
              </Card.Body>
          </Card>
              </Col>

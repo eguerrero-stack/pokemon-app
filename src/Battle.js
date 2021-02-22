@@ -14,6 +14,7 @@ export default function Battle() {
     const [isBattling, setIsBattling] = useState(false);
     const [pokeMoves,setPokeMoves] = useState([]);
     const [secondPokeMoves, setSecondPokeMoves] = useState([]);
+    const[battleHistory, setBattleHistory] = useState([]);
     let randomNum = () => {
         return Math.floor(Math.random()  * Math.floor(809))
     }
@@ -25,12 +26,14 @@ export default function Battle() {
         return firstPoke;
         
     }
+
     let getSecondPokemon = () => {
         const secondNum = randomNum();
         const secondPoke = axios.get(`https://pokeapi.co/api/v2/pokemon/${secondNum}`)
 
         return secondPoke;
     }
+
     let choosePokemon = () => {
         
         axios.all([getFirstPokemon(), getSecondPokemon()]).then(axios.spread((...res) => {
@@ -46,6 +49,7 @@ export default function Battle() {
 
         setPokemonChosen(true)
        setIsBattling(false)
+       setBattleHistory([])
         console.log('Pokemon chosen')
     }
 
@@ -57,6 +61,28 @@ export default function Battle() {
             setIsBattling(true)        
         }
     }
+
+
+    let pokemonBattle =() => {
+        let history = [...battleHistory];
+        let event ='';
+        if(!pokemonInfo || !pokemonTwoInfo) return;
+        if(pokemonInfo.stats[5].base_stat > pokemonTwoInfo.stats[5].base_stat){
+            debugger;
+            event = `${pokemonInfo.name} strikes first!, ${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat}` 
+                   history = event.split(',')
+            setBattleHistory(history);
+         
+        }else{
+            debugger;
+            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat}`
+            history = event.split(',')
+            setBattleHistory(history);
+          
+        }
+    }
+
+
 
 
 useEffect(()=>{
@@ -71,18 +97,19 @@ useEffect(() => {
     let firstPokemonWins;
     if(isBattling){
         
-        
-       firstPokemonWins = pokemonInfo.stats[1].base_stat > pokemonTwoInfo.stats[1].base_stat
-        if(firstPokemonWins){
-            console.log(`${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}`);
-            console.log(`${pokemonInfo.name} wins`)
-        }else{
-            console.log(`${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}`);
+        pokemonBattle();
+    //    firstPokemonWins = pokemonInfo.stats[1].base_stat > pokemonTwoInfo.stats[1].base_stat
+    //     if(firstPokemonWins){
+    //         console.log(`${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}`);
+    //         console.log(`${pokemonInfo.name} wins`)
+    //     }else{
+    //         console.log(`${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}`);
 
-            console.log(`${pokemonTwoInfo.name} wins`)
+    //         console.log(`${pokemonTwoInfo.name} wins`)
 
-        }
+    //     }
     }
+    console.log('history', battleHistory)
 }, [isBattling])
 
 
@@ -104,6 +131,7 @@ useEffect(() => {
 
 {pokemonChosen ? 
 <PokeBattleCards 
+    battleHistory={battleHistory}
     pokeMoves={pokeMoves} 
     setPokeMoves={setPokeMoves} 
     setSecondPokeMoves={setSecondPokeMoves} 
@@ -111,6 +139,7 @@ useEffect(() => {
     pokemonChosen={pokemonChosen} 
     pokemonInfo={pokemonInfo ? pokemonInfo : null} 
     pokemonTwoInfo={pokemonTwoInfo ? pokemonTwoInfo : null}/> 
+    
     : <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>}
 
 

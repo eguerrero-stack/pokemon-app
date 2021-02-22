@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react'
 import {Card,Row, Col, Table } from 'react-bootstrap'
 import "./PokeBattleCards.css"
 
-export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoInfo,pokeMoves, setPokeMoves, secondPokeMoves, setSecondPokeMoves}) {
+export default function PokeBattleCards({battleHistory, pokemonChosen, pokemonInfo, pokemonTwoInfo,pokeMoves, setPokeMoves, secondPokeMoves, setSecondPokeMoves}) {
     
     // console.log(pokemonInfo,pokemonTwoInfo)
     
@@ -45,15 +45,15 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
       console.log('pokemoves:', pokeMoves)
         
 // debugger;
-    },[pokemonInfo])
+    },[pokemonInfo, pokemonTwoInfo])
     
 
     return (
         <>
         <Row>
-            <Col xs={3}>
+            <Col xs={3} md={2}>
             <Card className="firstCard">
-           <Card.Body>
+           <Card.Body className="stats">
              
              {pokemonChosen && pokemonInfo.stats ?  <Table striped bordered hover variant="dark">
   <thead>
@@ -93,7 +93,7 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
            </Card.Body>
          </Card>
            </Col>
-           <Col xs={3}>
+           <Col xs={3} md={3}>
            <Card.Img variant="top" className="firstImage" src={pokemonInfo.sprites? pokemonInfo.sprites.front_default : "Nothing here"} />
            <Card.Title>{ pokemonInfo.name ? pokemonInfo.name.toUpperCase() : null }</Card.Title>
              {pokeMoves.length > 0? 
@@ -114,8 +114,12 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
             </tbody>
   </Table> : null }
          </Col>
-
-         <Col xs={3}>
+              <Col md={2}>
+              {battleHistory.length > 0 ? battleHistory.map((line, index) => (
+                <p key={index}>{line}</p>
+              )) : null}
+              </Col>
+         <Col xs={3} md={3}>
          <Card.Img variant="top" src={pokemonTwoInfo.sprites? pokemonTwoInfo.sprites.front_default : "Nothing here"} />
                 <Card.Title>{pokemonTwoInfo.name ? pokemonTwoInfo.name.toUpperCase(): null}</Card.Title>
                 {secondPokeMoves.length > 0 ? 
@@ -136,9 +140,9 @@ export default function PokeBattleCards({pokemonChosen, pokemonInfo, pokemonTwoI
             </tbody>
   </Table> : null }
          </Col>
-         <Col xs={3}>
+         <Col xs={3} md={2}>
          <Card className="secondCard">
-                <Card.Body>
+                <Card.Body className="stats">
                 {pokemonChosen && pokemonTwoInfo.stats ? 
                 <Table striped bordered hover variant="dark">
   <thead>
