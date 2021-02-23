@@ -6,15 +6,24 @@ import "./Battle.css"
 import axios from "axios"
 export default function Battle() {
 
-//@TODO add a battle background
+//@TODO add an hp bar using state with their grabbed stat 
+// eventually have the battle log slowly reveal the events without having it loop over like crazy
+//on the Pokedex side have the ability to click and view more details about any given pokemon
+//Declare winner on some type of banner when health of one of the pokemon goes to 0
+//If not showing the battle log then show 'VS'
 
-    const [pokemonInfo, setPokemonStats] = useState({});
+
+    const [pokemonInfo, setPokemonInfo] = useState({});
     const [pokemonTwoInfo, setpokemonTwoInfo] = useState({});
     const [pokemonChosen, setPokemonChosen] = useState(false)
     const [isBattling, setIsBattling] = useState(false);
     const [pokeMoves,setPokeMoves] = useState([]);
     const [secondPokeMoves, setSecondPokeMoves] = useState([]);
     const[battleHistory, setBattleHistory] = useState([]);
+    const [firstPokeHealth, setFirstPokeHealth] = useState(0);
+    const [firstPokeTotalHp, setFirstPokeTotalHp] = useState(0);
+    const [secondPokeHealth, setSecondPokeHealth] = useState(0);
+    const [secondPokeTotalHp, setSecondPokeTotalHp] = useState(0);
 
     let randomNum = () => {
         return Math.floor(Math.random()  * Math.floor(809))
@@ -40,7 +49,7 @@ export default function Battle() {
         axios.all([getFirstPokemon(), getSecondPokemon()]).then(axios.spread((...res) => {
             let firstPokemon = res[0].data;
           
-            setPokemonStats(firstPokemon);  
+            setPokemonInfo(firstPokemon);  
             let secondPokemon = res[1].data;
             // debugger;
             setpokemonTwoInfo(secondPokemon)
@@ -68,36 +77,39 @@ export default function Battle() {
         let history = [...battleHistory];
         let event ='';
         if(!pokemonInfo || !pokemonTwoInfo) return;
-        let firstPokeHp;
-        let secondPokeHp;
+        let firstPokeCurrHp;
+        let secondPokeCurrHp;
 
         if(pokemonInfo.stats[5].base_stat > pokemonTwoInfo.stats[5].base_stat){
-            secondPokeHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
-            event = `${pokemonInfo.name} strikes first!,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${secondPokeHp < 0 ? 0 : secondPokeHp}` 
-            if(secondPokeHp > 0){
-            firstPokeHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
-
-            event += `,${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeHp}`
+            secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat;
+             
+            setSecondPokeHealth(secondPokeCurrHp)
+            event = `${pokemonInfo.name} strikes first!,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}` 
+            if(secondPokeCurrHp > 0){
+            firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+            setFirstPokeHealth(firstPokeCurrHp)
+            event += `,${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
             }
              history = event.split(',')
             setBattleHistory(history);
          
         }else{
-            debugger;
-            firstPokeHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+            firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+            setFirstPokeHealth(firstPokeCurrHp)
+            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
+            if(firstPokeCurrHp > 0){
+                secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
+            setSecondPokeHealth(secondPokeCurrHp)
 
-            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeHp < 0 ? 0 : firstPokeHp}`
-            if(firstPokeHp > 0){
-                secondPokeHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
-                event += `,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}, ${pokemonTwoInfo.name} health is now ${secondPokeHp}`
+                event += `,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}, ${pokemonTwoInfo.name} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}`
                 }
             history = event.split(',')
             setBattleHistory(history);
           
         }
         
-        firstPokeHp <= 0 ? console.log(`${pokemonTwoInfo.name} wins`) : console.log('...');
-        secondPokeHp <= 0 ? console.log(`${pokemonInfo.name} wins`) : console.log('...');
+        firstPokeCurrHp <= 0 ? console.log(`${pokemonTwoInfo.name} wins`) : console.log('...');
+        secondPokeCurrHp <= 0 ? console.log(`${pokemonInfo.name} wins`) : console.log('...');
 
     }
 
@@ -126,38 +138,42 @@ useEffect(() => {
 
     return (
         <div>
-            <Jumbotron>
-  <h1>Time to Battle!</h1>
-  <p>
-    Let RNG decide who wins
-  </p>
-  <div>
-    <Button variant="primary" onClick={choosePokemon}>Choose Pokemon</Button>
-  </div>
-</Jumbotron>
-<div className="battleBg">
-<div style={{textAlign:'center'}} >
-<Button variant="danger" onClick={startBattle}>Battle!</Button>
-</div>
+                <Jumbotron>
+                  <h1>Time to Battle!</h1>
+                  <p>Let RNG decide who wins</p>
+                  <div>
+                    <Button variant="primary" onClick={choosePokemon}>Choose Pokemon</Button>
+                  </div>
+                </Jumbotron>
+                <div className="battleBg">
+                    <div style={{textAlign:'center'}} >
+                        { pokemonChosen ? <Button variant="danger" onClick={startBattle}>Battle!</Button> : '' }
+                    </div>
 
-{pokemonChosen ? 
-<PokeBattleCards 
-    isBattling={isBattling}
-    setIsBattling={setIsBattling}
-    battleHistory={battleHistory}
-    pokeMoves={pokeMoves} 
-    setPokeMoves={setPokeMoves} 
-    setSecondPokeMoves={setSecondPokeMoves} 
-    secondPokeMoves={secondPokeMoves} 
-    pokemonChosen={pokemonChosen} 
-    pokemonInfo={pokemonInfo ? pokemonInfo : null} 
-    pokemonTwoInfo={pokemonTwoInfo ? pokemonTwoInfo : null}/> 
-    
-    : <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>}
+                        {pokemonChosen ? 
+                        <PokeBattleCards 
+                            isBattling={isBattling}
+                            setIsBattling={setIsBattling}
+                            battleHistory={battleHistory}
+                            pokeMoves={pokeMoves} 
+                            setPokeMoves={setPokeMoves} 
+                            setSecondPokeMoves={setSecondPokeMoves} 
+                            secondPokeMoves={secondPokeMoves} 
+                            pokemonChosen={pokemonChosen} 
+                            pokemonInfo={pokemonInfo ? pokemonInfo : null} 
+                            pokemonTwoInfo={pokemonTwoInfo ? pokemonTwoInfo : null}
+                            firstPokeHealth={firstPokeHealth}
+                            secondPokeHealth={secondPokeHealth}
+                            setFirstPokeHealth={setFirstPokeHealth}
+                            setSecondPokeHealth={setSecondPokeHealth}
+                            firstPokeTotalHp={firstPokeTotalHp}
+                            setFirstPokeTotalHp={setFirstPokeTotalHp}
+                            secondPokeTotalHp={secondPokeTotalHp}
+                            setSecondPokeTotalHp={setSecondPokeTotalHp}
 
-
-
-        </div>
+                            /> 
+                            : <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>}         
+                 </div>
         </div>
     )
 }
