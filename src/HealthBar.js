@@ -33,9 +33,10 @@ const props = useSpring({width: isAttacking ? `${width}%`: `100%` })
 
 
     return (
-        <div class="health-bar" data-total={pokeTotalHp} data-value={pokeHealth}>
-            <animated.div class="bar" style={props}>
-  	            <animated.div class="hit">{pokeHealth < 0 ? 0 : pokeHealth}</animated.div>
+        <div className="health-bar" data-total={pokeTotalHp} data-value={pokeHealth}>
+                  {/* <p>{pokeHealth < 0 ? 0 : pokeHealth}</p> */}
+            <animated.div className="bar" style={props}>
+  	            {/* <animated.div class="hit">{pokeHealth < 0 ? 0 : pokeHealth}</animated.div> */}
             </animated.div>
         </div>
     )

@@ -2,7 +2,7 @@ import React,{useState, useEffect} from 'react'
 import {Card,Row, Col, Table,ListGroup } from 'react-bootstrap'
 import HealthBar from './HealthBar';
 import "./PokeBattleCards.css"
-
+import defaultImg from "./images/default.png"
 export default function PokeBattleCards({
   isBattling, 
   battleHistory, 
@@ -27,7 +27,6 @@ export default function PokeBattleCards({
 
     const [isFirstRender, setIsFirstRender] = useState(true);
    
-    
 
 
 
@@ -141,7 +140,7 @@ export default function PokeBattleCards({
               </Card>
            </Col>
            <Col xs={3} md={3}>
-           <Card.Img variant="top" className="firstImage transparent" src={pokemonInfo.sprites? pokemonInfo.sprites.front_default : "Nothing here"} />
+           <Card.Img variant="top" className="firstImage transparent" src={pokemonInfo.sprites ? pokemonInfo.sprites.front_default : defaultImg} />
            <Card.Title className="title">{ pokemonInfo.name ? pokemonInfo.name.toUpperCase() : null }</Card.Title>
            <HealthBar pokeHealth={firstPokeHealth} pokeTotalHp={firstPokeTotalHp}/>
              {pokeMoves.length > 0? 
@@ -168,11 +167,11 @@ export default function PokeBattleCards({
                  {isBattling ? battleHistory.map((line, index) => {
                    return <ListGroup.Item key={index}>{line}</ListGroup.Item>
                  })
-                     : null}
+                     : <h1 className="waiting" style={{fontSize: '5rem'}}>VS</h1>}
                  </ListGroup>
               </Col>
          <Col xs={3} md={3}>
-          <Card.Img className="transparent" variant="top" src={pokemonTwoInfo.sprites? pokemonTwoInfo.sprites.front_default : "Nothing here"} />
+          <Card.Img className="transparent" variant="top" src={pokemonTwoInfo.sprites? pokemonTwoInfo.sprites.front_default : defaultImg} />
                  <Card.Title className="title">{pokemonTwoInfo.name ? pokemonTwoInfo.name.toUpperCase(): null}</Card.Title>
                  <HealthBar  pokeHealth={secondPokeHealth} pokeTotalHp={secondPokeTotalHp} />
                  {secondPokeMoves.length > 0 ? 

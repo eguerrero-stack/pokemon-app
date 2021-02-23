@@ -6,9 +6,9 @@ import "./Battle.css"
 import axios from "axios"
 export default function Battle() {
 
-//@TODO add an hp bar using state with their grabbed stat 
+//@TODO 
 // eventually have the battle log slowly reveal the events without having it loop over like crazy
-//on the Pokedex side have the ability to click and view more details about any given pokemon
+//on the Pokedex side have the ability to click and view more details about any given pokemon with pie charts including the stats would be dope
 //Declare winner on some type of banner when health of one of the pokemon goes to 0
 //If not showing the battle log then show 'VS'
 
@@ -70,8 +70,13 @@ export default function Battle() {
         if(pokemonInfo && pokemonTwoInfo){ 
             setIsBattling(true)        
         }
+        if(firstPokeHealth !== firstPokeTotalHp || secondPokeHealth !== secondPokeTotalHp){
+            continueBattle()
+        }
     }
-
+    let continueBattle = () => {
+        //This would be called to continue the battle if both pokemon are still alive 
+    }
 
     let pokemonBattle =() => {
         let history = [...battleHistory];
@@ -79,16 +84,18 @@ export default function Battle() {
         if(!pokemonInfo || !pokemonTwoInfo) return;
         let firstPokeCurrHp;
         let secondPokeCurrHp;
+        let firstPokeName = `${pokemonInfo.name.toUpperCase()}`
+        let secondPokeName = `${pokemonTwoInfo.name.toUpperCase()}`
 
         if(pokemonInfo.stats[5].base_stat > pokemonTwoInfo.stats[5].base_stat){
             secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat;
              
             setSecondPokeHealth(secondPokeCurrHp)
-            event = `${pokemonInfo.name} strikes first!,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}` 
+            event = `${firstPokeName} strikes first!,${firstPokeName} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${secondPokeName} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}` 
             if(secondPokeCurrHp > 0){
             firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
             setFirstPokeHealth(firstPokeCurrHp)
-            event += `,${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
+            event += `,${secondPokeName} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${firstPokeName} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
             }
              history = event.split(',')
             setBattleHistory(history);
@@ -96,20 +103,20 @@ export default function Battle() {
         }else{
             firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
             setFirstPokeHealth(firstPokeCurrHp)
-            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
+            event =`${secondPokeName} strikes first!, ${secondPokeName} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${firstPokeName} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
             if(firstPokeCurrHp > 0){
                 secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
             setSecondPokeHealth(secondPokeCurrHp)
 
-                event += `,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}, ${pokemonTwoInfo.name} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}`
+                event += `,${firstPokeName} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}, ${secondPokeName} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}`
                 }
             history = event.split(',')
             setBattleHistory(history);
           
         }
         
-        firstPokeCurrHp <= 0 ? console.log(`${pokemonTwoInfo.name} wins`) : console.log('...');
-        secondPokeCurrHp <= 0 ? console.log(`${pokemonInfo.name} wins`) : console.log('...');
+        firstPokeCurrHp <= 0 ? console.log(`${secondPokeName} wins`) : console.log('...');
+        secondPokeCurrHp <= 0 ? console.log(`${firstPokeName} wins`) : console.log('...');
 
     }
 
@@ -172,7 +179,12 @@ useEffect(() => {
                             setSecondPokeTotalHp={setSecondPokeTotalHp}
 
                             /> 
-                            : <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>}         
+                            : 
+                            <div className="waiting">
+
+                            <h1 style={{textAlign:'center'}}>Waiting for Battle...</h1>
+                            </div>
+                            }         
                  </div>
         </div>
     )
