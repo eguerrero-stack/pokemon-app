@@ -15,6 +15,7 @@ export default function Battle() {
     const [pokeMoves,setPokeMoves] = useState([]);
     const [secondPokeMoves, setSecondPokeMoves] = useState([]);
     const[battleHistory, setBattleHistory] = useState([]);
+
     let randomNum = () => {
         return Math.floor(Math.random()  * Math.floor(809))
     }
@@ -48,15 +49,15 @@ export default function Battle() {
         })
 
         setPokemonChosen(true)
-       setIsBattling(false)
-       setBattleHistory([])
-        console.log('Pokemon chosen')
+        setIsBattling(false)
+        setBattleHistory([])
+        console.log('Pokemon chosen, isBattling false, battleHistory empty')
     }
 
 
     const startBattle = () => {
-         console.log(`${pokemonInfo.name} is battling ${pokemonTwoInfo.name}`);
-        // console.log('Pokemon Battle', pokemonTwoInfo);
+         console.log(`${pokemonInfo.name} vs ${pokemonTwoInfo.name}`);
+        
         if(pokemonInfo && pokemonTwoInfo){ 
             setIsBattling(true)        
         }
@@ -67,47 +68,57 @@ export default function Battle() {
         let history = [...battleHistory];
         let event ='';
         if(!pokemonInfo || !pokemonTwoInfo) return;
+        let firstPokeHp;
+        let secondPokeHp;
+
         if(pokemonInfo.stats[5].base_stat > pokemonTwoInfo.stats[5].base_stat){
-            debugger;
-            event = `${pokemonInfo.name} strikes first!, ${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat}` 
-                   history = event.split(',')
+            secondPokeHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
+            event = `${pokemonInfo.name} strikes first!,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name},${pokemonTwoInfo.name} health is now ${secondPokeHp < 0 ? 0 : secondPokeHp}` 
+            if(secondPokeHp > 0){
+            firstPokeHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+
+            event += `,${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeHp}`
+            }
+             history = event.split(',')
             setBattleHistory(history);
          
         }else{
             debugger;
-            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat}`
+            firstPokeHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+
+            event =`${pokemonTwoInfo.name} strikes first!, ${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}, ${pokemonInfo.name} health is now ${firstPokeHp < 0 ? 0 : firstPokeHp}`
+            if(firstPokeHp > 0){
+                secondPokeHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
+                event += `,${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}, ${pokemonTwoInfo.name} health is now ${secondPokeHp}`
+                }
             history = event.split(',')
             setBattleHistory(history);
           
         }
+        
+        firstPokeHp <= 0 ? console.log(`${pokemonTwoInfo.name} wins`) : console.log('...');
+        secondPokeHp <= 0 ? console.log(`${pokemonInfo.name} wins`) : console.log('...');
+
     }
 
 
 
 
-useEffect(()=>{
-    // debugger;
-    if(!pokemonInfo && !pokemonTwoInfo){
-        setPokemonChosen(false)
-        setIsBattling(false)
-    }
-})
+// useEffect(()=>{
+//     debugger;
+    
+//     if(Object.keys(pokemonInfo).length === 0 && Object.keys(pokemonTwoInfo).length === 0){
+//         console.log(' setting battle and pokemon chosen to false')
+//         setPokemonChosen(false)
+//         setIsBattling(false)
+//     }
+// })
     
 useEffect(() => {
     let firstPokemonWins;
     if(isBattling){
         
         pokemonBattle();
-    //    firstPokemonWins = pokemonInfo.stats[1].base_stat > pokemonTwoInfo.stats[1].base_stat
-    //     if(firstPokemonWins){
-    //         console.log(`${pokemonInfo.name} uses ${pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name}`);
-    //         console.log(`${pokemonInfo.name} wins`)
-    //     }else{
-    //         console.log(`${pokemonTwoInfo.name} uses ${secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name}`);
-
-    //         console.log(`${pokemonTwoInfo.name} wins`)
-
-    //     }
     }
     console.log('history', battleHistory)
 }, [isBattling])
@@ -131,6 +142,8 @@ useEffect(() => {
 
 {pokemonChosen ? 
 <PokeBattleCards 
+    isBattling={isBattling}
+    setIsBattling={setIsBattling}
     battleHistory={battleHistory}
     pokeMoves={pokeMoves} 
     setPokeMoves={setPokeMoves} 

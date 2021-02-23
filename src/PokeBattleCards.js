@@ -1,11 +1,11 @@
 import React,{useState, useEffect} from 'react'
-import {Card,Row, Col, Table } from 'react-bootstrap'
+import {Card,Row, Col, Table,ListGroup } from 'react-bootstrap'
 import "./PokeBattleCards.css"
 
-export default function PokeBattleCards({battleHistory, pokemonChosen, pokemonInfo, pokemonTwoInfo,pokeMoves, setPokeMoves, secondPokeMoves, setSecondPokeMoves}) {
+export default function PokeBattleCards({isBattling, battleHistory, pokemonChosen, pokemonInfo, pokemonTwoInfo,pokeMoves,setIsBattling, setPokeMoves, secondPokeMoves, setSecondPokeMoves}) {
     
     // console.log(pokemonInfo,pokemonTwoInfo)
-    
+    const [isFirstRender, setIsFirstRender] = useState(true);
     let randomMoves = (movesLength, first) => {
         let movesArray =[];
         if(movesLength > 0){
@@ -27,25 +27,40 @@ export default function PokeBattleCards({battleHistory, pokemonChosen, pokemonIn
        
     }
 
-  
-
-
+//Trying to have the log appear one at a time
+    // let createHistory = () => {
+      
+      
+    //   battleHistory.map((line, index) => {
+    //     // if(index ===2) {setIsFirstRender(false)};
+    //     if(isBattling){
+    //     setTimeout(() => {
+    //       console.log(line)
+    //       return <p key={index}>{line}</p>
+          
+         
+    //     },index *1000)
+    //   }
+    //   //  console.log(setTimeout(() => {return <p key={index}>{line}</p>},index))
+    //    return console.log('done looping')
+    //   })
+    // }
 
 
     useEffect(()=>{
       // console.log('pokemonInfo',pokemonInfo)
       
-      if(Object.keys(pokemonInfo).length === 0 || Object.keys(pokemonTwoInfo).length === 0) return false
+      if(!pokemonChosen) return 
+      if (Object.keys(pokemonInfo).length === 0 || Object.keys(pokemonTwoInfo).length === 0 ) return
+
       if(pokemonInfo.moves.length > 0){
 
         randomMoves(pokemonInfo.moves.length, true)
         randomMoves(pokemonTwoInfo.moves.length, false)
         
       }
-      console.log('pokemoves:', pokeMoves)
-        
-// debugger;
-    },[pokemonInfo, pokemonTwoInfo])
+        setIsFirstRender(false)
+    },[pokemonTwoInfo])
     
 
     return (
@@ -115,9 +130,13 @@ export default function PokeBattleCards({battleHistory, pokemonChosen, pokemonIn
   </Table> : null }
          </Col>
               <Col md={2}>
-              {battleHistory.length > 0 ? battleHistory.map((line, index) => (
-                <p key={index}>{line}</p>
-              )) : null}
+                <ListGroup>
+              {/* {isBattling? createHistory() : null} */}
+              {isBattling ? battleHistory.map((line, index) => {
+ return <ListGroup.Item key={index}>{line}</ListGroup.Item>
+              })
+          : null}
+</ListGroup>
               </Col>
          <Col xs={3} md={3}>
          <Card.Img variant="top" src={pokemonTwoInfo.sprites? pokemonTwoInfo.sprites.front_default : "Nothing here"} />

@@ -8,7 +8,7 @@ export default function BattleLog({battleLog}) {
     // console.log(battleLog) 
     return (
         <ListGroup>
-            {battleLog ? battleLog.map((log) => <item key={new Date().getTime()}>{log}</item> ) : <p></p>}
+            {battleLog ? battleLog.map((log, index) => <ListGroup.Item key={index}>{log}</ListGroup.Item> ) : <p></p>}
         </ListGroup>
     )
 }
