@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Container,Card } from "react-bootstrap";
 import {Link} from "react-router-dom";
 import "./App.css"
-// import background from './images/pokeBackground.jpg'
+
 
 
 function App() {
@@ -40,21 +40,6 @@ setPokemonNames(res.data.results.map(p => p.name))
 //@TODO Style search result 
 
 
-
-// res.data.results.map(p => {
-//   setIsLoading(true)
-//   axios.get(p.url).then(res => {
-//   setIsLoading(false)
-//   setPokemonData([...pokemonData], [res.data])
-
-//     })
-//     return null
-//   }
-// )
-
-
-
-
  },
  (error => console.log(error)))
 }
@@ -76,13 +61,6 @@ useEffect(() => {
 
 }, [currentPageUrl])
 
-// useEffect(() => {
-//   pokemonNames.map(name => axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`).then(res => {
-//     setPokemonData([res.data]) 
-    
- 
-// },[pokemonNames])
-// )})
 
 
   
@@ -93,28 +71,26 @@ if(isSearching) {
 }
   return (
     <>  
-    <div className="bgImg">
-      <Header/>
-      
-      <Link to="/battle">Battle</Link>
-      
-    <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
-    <Container fluid>
-    {isSearching ? 
-      <>
-        <SearchResult pokemonData={pokemonData}/>
-      </>
-: 
-<>
-          <Pagination 
-          goToNextPage={nextPageUrl ? goToNextPage : null}           
-          goToPrevPage={prevPageUrl ? goToPrevPage : null}
-          />
-          <PokemonList pokemonNames={pokemonNames} pokemonData={pokemonData} />
-</>
-}
-    </Container>
-    </div>
+      <div className="bgImg">
+          <Header/>
+          <Link to="/battle">Battle</Link>
+          <Search setIsSearching={setIsSearching} pokemonData={pokemonData} setPokemonData={setPokemonData}/>
+              <Container fluid>
+                {isSearching ? 
+                  <>
+                    <SearchResult pokemonData={pokemonData}/>
+                  </>
+                    : 
+                    <>
+                      <Pagination 
+                      goToNextPage={nextPageUrl ? goToNextPage : null}           
+                      goToPrevPage={prevPageUrl ? goToPrevPage : null}
+                      />
+                      <PokemonList pokemonNames={pokemonNames} pokemonData={pokemonData} />
+                   </>
+                 }
+              </Container>
+      </div>
     </>
               );
 }

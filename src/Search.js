@@ -28,12 +28,12 @@ useEffect(() => {
     return (
         <>
             <Form>
-  <Form.Group controlId="pokemonName">
-    <Form.Label>Pokemon Name</Form.Label>
-    <Form.Control type="text" placeholder="Enter pokemon" value={searchPokemon} onChange={(e) => setSearchPokemon(e.target.value)}/> 
-    <Button variant="warning" onClick={search}>Search</Button>
-  </Form.Group>
-  </Form>
+                <Form.Group controlId="pokemonName">
+                  <Form.Label>Pokemon Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter pokemon" value={searchPokemon} onChange={(e) => setSearchPokemon(e.target.value)}/> 
+                  <Button variant="warning" onClick={search}>Search</Button>
+                </Form.Group>
+            </Form>
         </>
     )
 }
