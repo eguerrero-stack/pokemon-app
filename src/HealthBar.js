@@ -5,9 +5,10 @@ export default function HealthBar({pokeHealth,pokeTotalHp}) {
 
 const [isAttacking, setIsAttacking] = useState(false)
 const [width, setWidth] = useState(100)
+
 const props = useSpring({width: isAttacking ? `${width}%`: `100%` })
 
-
+// health bar might be breaking due to the change in what i am passing in as props
 
     useEffect(() => {
         

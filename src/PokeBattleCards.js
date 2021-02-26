@@ -6,6 +6,7 @@ import defaultImg from "./images/default.png"
 export default function PokeBattleCards({
   isBattling, 
   battleHistory, 
+  doneThinking,
   pokemonChosen, 
   pokemonInfo, 
   pokemonTwoInfo,
@@ -89,7 +90,7 @@ export default function PokeBattleCards({
         
       }
 
-        setIsFirstRender(false)
+        setIsBattling(false)
     },[pokemonTwoInfo])
     
 
@@ -163,8 +164,8 @@ export default function PokeBattleCards({
          </Col>
               <Col md={2}>
                    <ListGroup>
-                 {/* {isBattling? createHistory() : null} */}
-                 {isBattling ? battleHistory.map((line, index) => {
+                 
+                 {isBattling && doneThinking ? battleHistory.map((line, index) => {
                    return <ListGroup.Item key={index}>{line}</ListGroup.Item>
                  })
                      : <h1 className="waiting" style={{fontSize: '5rem'}}>VS</h1>}
