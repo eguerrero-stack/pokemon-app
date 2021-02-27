@@ -29,7 +29,7 @@ const getPokemon = function(){
   })
 .then(res => {
   setIsLoading(false);
-  console.log(res.data);
+  // console.log(res.data);
 setNextPageUrl(res.data.next);
 setPrevPageUrl(res.data.previous);
 setPokemonNames(res.data.results.map(p => p.name))

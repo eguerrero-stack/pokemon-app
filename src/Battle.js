@@ -11,7 +11,8 @@ export default function Battle() {
 // eventually have the battle log slowly reveal the events without having it loop over like crazy
 //on the Pokedex side have the ability to click and view more details about any given pokemon with pie charts including the stats would be dope
 //Declare winner on some type of banner when health of one of the pokemon goes to 0
-//If not showing the battle log then show 'VS'
+//If no pokemon loses, call it a tie so you don't go insane
+//Problem is that the current move is not being updated and sometimes pokemon will use the last move that was set 
 
 
     const [pokemonInfo, setPokemonInfo] = useState({});
@@ -25,7 +26,7 @@ export default function Battle() {
     const [firstPokeTotalHp, setFirstPokeTotalHp] = useState(0);
     const [secondPokeHealth, setSecondPokeHealth] = useState(0);
     const [secondPokeTotalHp, setSecondPokeTotalHp] = useState(0);
-    const [isFightOver,setIsFightOver] = useState(false)
+    const [isFightOver,setIsFightOver] = useState(true)
     const [move, setMove] = useState('')
     const [moveInfo, setMoveInfo] = useState({});
     const [secMoveInfo,setSecMoveInfo] = useState({});
@@ -35,11 +36,9 @@ export default function Battle() {
     const abilityInfo = useRef('')
     const [doneThinking,setDoneThinking] = useState(false)
     const [attack, setAttack] = useState(false)
+    const [leftIsAttacking,setLeftIsAttacking] = useState(false);
     // const secAbilityInfo = useRef('')
 
-    //Main problem is that the axios call is returning undefined which throws everything off. this way i am thinking i should handle the  battle logic 
-    //within a different function outside of start battle.
-    //useEffect that tracks attack will start battle logic. the attack will be set once the chosen pokemon has an attack with a calculated hit or not
     
 
     let randomNum = () => {
@@ -76,9 +75,11 @@ export default function Battle() {
 
         setPokemonChosen(true)
         setIsBattling(false)
+        setIsFightOver(true)
         setBattleHistory([])
         setMove('')
         setCounterMove('')
+        setAttack(()=> false)
         // console.log('Pokemon chosen, isBattling false, battleHistory empty')
     }
 
@@ -91,18 +92,12 @@ export default function Battle() {
             let didDmg = willHit(res.data.accuracy)
             //this attack state change will trigger battle function in a useEFfect
             setAttack(() => didDmg)
-            debugger;
+            
            
     },
     (error => console.log(error))
         )
-        // .then((res)=> {
-        //     debugger;
-            
-        //     return res;
-
-        // })
-        // .finally(()=> setDoneThinking(() =>true))
+       
     }
     const startBattle = () => {
         //  console.log(`${pokemonInfo.name} vs ${pokemonTwoInfo.name}`);
@@ -128,163 +123,230 @@ export default function Battle() {
 
 
     let pokemonBattle =() => {
-        let history = [...battleHistory];
-        let event ='';
-        if(!pokemonInfo || !pokemonTwoInfo) return;
-        let firstPokeCurrHp;
-        let secondPokeCurrHp;
-        let firstPokeName = `${pokemonInfo.name.toUpperCase()}`
-        let secondPokeName = `${pokemonTwoInfo.name.toUpperCase()}`
-        // let didHit;
         setDoneThinking(() => false)
+        
         if(pokemonInfo.stats[5].base_stat > pokemonTwoInfo.stats[5].base_stat){
           //first pokemon attacks
-        //   setDoneThinking(() => false)
         
             firstAbility.current = pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name
             
             setMove(firstAbility.current)
-            // debugger;
+            
             getMoveInfo(firstAbility.current)
-            debugger;
-            if(attack === undefined) return
-            if(attack === null){
-                console.log(abilityInfo)
-                return
-            }
-            //first poke attack missed
-            if(!attack){
-                debugger
-                secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat
-                 event = `${firstPokeName} attacks, Oh no!, ${firstAbility.current} missed`;
-            } 
-            else{
-                //first attack landed, second poke loses health
-                console.log(abilityInfo)
-
-                secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat;  
-                setSecondPokeHealth(secondPokeCurrHp)
-                event = `${firstPokeName} strikes first!,${firstPokeName} uses ${firstAbility.current},${secondPokeName} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}` 
-            }
-
-                if(secondPokeCurrHp > 0){
-                    //second poke not dead, counter attack first pokemon
-                    secondAbility.current = secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name
-                     getMoveInfo(secondAbility.current)
-                    setCounterMove(secondAbility.current)
-                    //second poke attack missed
-                    debugger
-                    if(attack === null){
-                        console.log(abilityInfo)
-                        return
-                    }
-                    if(!attack){
-                        event += `${secondPokeName} attacks,Oh no!, ${secondAbility.current} missed`;
-                   } 
-                   //second poke attack landed
-                   else{
-                    firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
-                    setFirstPokeHealth(firstPokeCurrHp)
-                    console.log(abilityInfo)
-                    event += `,${secondPokeName} uses ${secondAbility.current}, ${firstPokeName} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
-                   }
-
-
-                }
-            //full battle log is set
-            attack === undefined ?  setDoneThinking(false) : setDoneThinking(true)
-             history = event.split(',')
-            setBattleHistory(history);
-            debugger;
+            setLeftIsAttacking(()=> true)
 
         }else{
             //second poke attacks first
             firstAbility.current = secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name
             setMove(firstAbility.current)
-            // debugger;
+            
             getMoveInfo(firstAbility.current)
             
 
-                    if(attack === undefined) return
-
-                    if(attack === null){
-                        console.log(firstAbility.current)
-                        return
-                    }
-                    //second Pokemon misses
-                    debugger;
-                     if(!attack){
-                          event = `${secondPokeName} attacks, Oh no!, ${firstAbility.current} missed`;
-                          firstPokeCurrHp = pokemonInfo.stats[0].base_stat
-                     } 
-                     else{
-                        //Second poke attack lands, first poke health is lost
-                        console.log(firstAbility.current)
-
-                         firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat;  
-                         setFirstPokeHealth(firstPokeCurrHp)
-                         event =`${secondPokeName} strikes first!, ${secondPokeName} uses ${firstAbility.current}, ${firstPokeName} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}` 
-                     }
-                    
-                 
-                     
-                            if(firstPokeCurrHp > 0){
-                                //first poke not dead, they counter
-                                secondAbility.current = pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name
-                                getMoveInfo(secondAbility.current)
-                                setCounterMove(secondAbility.current)
-                                debugger;
-                                if(attack === null){
-                                    console.log(secondAbility.current)
-                                    return
-                                }
-                                // first poke counter attack misses
-                                    if(!attack){
-                                        event += `${firstPokeName} attacks,Oh no!, ${secondAbility.current} missed`;
-                                    }else{
-                                        //first poke counter lands, second poke loses health
-                                        secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
-                                        setSecondPokeHealth(secondPokeCurrHp)
-                                         console.log(secondAbility.current)
-                                        event += `,${firstPokeName} uses ${secondAbility.current}, ${secondPokeName} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}`
-                                    
-                                    }
-                                }
-                                //set battle history
-                                attack === undefined ?  setDoneThinking(false) : setDoneThinking(true)
-                    history = event.split(',')
-                    setBattleHistory(history);
-                    debugger;
-                    // setDoneThinking(true);
         }
         
-        firstPokeCurrHp <= 0 ? console.log(`${secondPokeName} wins`) : console.log(`${firstPokeName} wins`);
 
     }
 
-// useEffect(() => {
- 
+useEffect(() => {
+    let history = [...battleHistory];
+    let event ='';
+    let firstPokeCurrHp;
+    let secondPokeCurrHp;
+    debugger;
+        if(!isBattling) return
+                    if(!pokemonInfo || !pokemonTwoInfo) return;
+                
+                    let firstPokeName = `${!pokemonInfo ? '': pokemonInfo.name}`
+                    let secondPokeName = `${!pokemonTwoInfo ? '' : pokemonTwoInfo.name}`
+                
+                    if(leftIsAttacking){
+                                if(attack === undefined) return
+                                if(attack === null){
+                                    event = `${firstPokeName} uses ${firstAbility.current}, This ${abilityInfo.current.effect_entries[0].short_effect}`
+                                   //  setBattleHistory(()=>event.split(','));
+                                    console.log('Current event to be shown', event)
+                                    setIsFightOver(false)
 
-    
-// }, [attack)
+                                } else if(!attack){
+                                    secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat
+                                    event = `${firstPokeName} attacks, Oh no!, ${firstAbility.current} missed`;
+                                    console.log('Current event to be shown', event)
+                                    setIsFightOver(false)
+                                
+                                } 
+                                else{
+                                    //first attack landed, second poke loses health
+                                    console.log(abilityInfo)
+                                
+                                    // secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat;  
+                                    secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - (abilityInfo.current.power == null ? abilityInfo.current.power = 0 : abilityInfo.current.power) ;  
+                                
+                                    setSecondPokeHealth(()=>secondPokeCurrHp)
+                                    event = `${firstPokeName} strikes first!,${firstPokeName} uses ${firstAbility.current},${secondPokeName} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}` 
+                                    debugger
+
+                                }
+                                
+                                if(attack === undefined) return
+                                if(secondPokeCurrHp > 0){
+                                    setIsFightOver(()=>false)
+                                    setDoneThinking(()=>false)
+                                    history = event.split(',')
+                                    setBattleHistory(history);
+                                    }else{
+                                         setIsFightOver(()=>true)
+                                        setDoneThinking(()=>true)
+                                        history = event.split(',')
+                                        setBattleHistory(history);
+                                        }
+                    //full battle log is set
+                                  debugger
+                     
+                    
+                    }else{
+                        if(attack === undefined) return
+
+                                if(attack === null){
+                                    event = `${secondPokeName} uses ${firstAbility.current}, This ${abilityInfo.current.effect_entries[0].short_effect}`
+                                    console.log('Second poke attack ability does no dmg but it does this:',abilityInfo.current.effect_entries[0].short_effect)
+                                    
+                                    setIsFightOver(false)
+                                
+                                }else if(!attack )
+                                {
+                                      event = `${secondPokeName} attacks, Oh no!, ${firstAbility.current} missed`;
+                                      setIsFightOver(false)
+                                    //   firstPokeCurrHp = pokemonInfo.stats[0].base_stat
+                                } 
+                                 else{
+                                    //Second poke attack lands, first poke health is lost
+                                    console.log(firstAbility.current)
+                                
+                                    //  firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat;  
+                                     firstPokeCurrHp = pokemonInfo.stats[0].base_stat - (abilityInfo.current.power == null ? abilityInfo.current.power = 0 : abilityInfo.current.power)
+                                           
+                                
+                                     setFirstPokeHealth(()=>firstPokeCurrHp)
+                                     event =`${secondPokeName} strikes first!, ${secondPokeName} uses ${firstAbility.current}, ${firstPokeName} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}` 
+                                    
+                                
+                                         
+                                    }
+                                //set battle history
+                                debugger;
+                                if(firstPokeCurrHp > 0){
+                                    setIsFightOver(()=>false)
+                                
+                                    setDoneThinking(()=>false)
+                                    history = event.split(',')
+                                    setBattleHistory(history);
+                                    }else{
+                                         setIsFightOver(()=>true)
+                                        setDoneThinking(()=>true)
+                                        history = event.split(',')
+                                        setBattleHistory(history);
+                                        }                           
+                    }
+
+        // firstPokeCurrHp <= 0 ? console.log(`${secondPokeName} wins`) : console.log(`${firstPokeName} wins`);
+
+}, [attack])
 
 
+useEffect(() => {
 
+    let continuedBattle = [...battleHistory]
+    debugger;
+                if(isFightOver) return
+                if(leftIsAttacking && isBattling){
+                    if(secondPokeHealth > 0){
+                        //second poke not dead, counter attack first pokemon
+                        secondAbility.current = secondPokeMoves[Math.floor(Math.random()  * Math.floor(secondPokeMoves.length))].name
+                         getMoveInfo(secondAbility.current)
+                        setCounterMove(secondAbility.current)
+                        //second poke attack missed
+                        debugger
+                                if(attack === null){
+                                    continuedBattle += `${pokemonTwoInfo.name} uses ${secondAbility.current}, This ${abilityInfo.current.effect_entries[0].short_effect}`
+                                    console.log('Ability does no dmg but it does this:',abilityInfo.current.effect_entries[0].short_effect)
+                                    // setDoneThinking(true)
+
+                                }else if(!attack){
+
+                                    continuedBattle += `${pokemonTwoInfo.name} attacks,Oh no!, ${secondAbility.current} missed`;
+                                    setIsFightOver(() =>false)
+                                    }         
+                                //second poke attack landed
+                                    else{
+                                     // firstPokeCurrHp = pokemonInfo.stats[0].base_stat - pokemonTwoInfo.stats[1].base_stat 
+                                    
+                                    let firstPokeCurrHp = pokemonInfo.stats[0].base_stat -  (abilityInfo.current.power == null ? abilityInfo.current.power = 0 : abilityInfo.current.power)
+                                    
+                                     setFirstPokeHealth(firstPokeCurrHp)
+                                     console.log('Ability to be used:',abilityInfo)
+                                     continuedBattle += `,${pokemonTwoInfo.name} uses ${secondAbility.current}, ${pokemonInfo.name} health is now ${firstPokeCurrHp < 0 ? 0 : firstPokeCurrHp}`
+                                    }        
+                                    console.log('this is the continued battle', continueBattle)
+                                    setBattleHistory(()=> continuedBattle.split(','))
+                                    setDoneThinking(()=> true)
+                    }
+                
+                }else{
+
+                    if(firstPokeHealth > 0  && isBattling){
+                        //first poke not dead, they counter
+                        secondAbility.current = pokeMoves[Math.floor(Math.random()  * Math.floor(pokeMoves.length))].name
+                        getMoveInfo(secondAbility.current)
+                        setCounterMove(secondAbility.current)
+                        
+                            if(attack === null){
+                                continuedBattle += `${pokemonInfo.name} uses ${secondAbility.current}, This ${abilityInfo.current.effect_entries[0].short_effect}`
+                                console.log(secondAbility.current)
+                            
+                                //  setDoneThinking(true)
+                                //  setBattleHistory(()=> continuedBattle.split(','));
+
+                            }else if(!attack)
+                                {
+                                    continuedBattle += `${pokemonInfo.name} attacks,Oh no!, ${secondAbility.current} missed`;
+                                    setBattleHistory(()=> continuedBattle.split(','));
+                                
+                                }
+                                else
+                                {
+                                    //first poke counter lands, second poke loses health
+                                    // secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - pokemonInfo.stats[1].base_stat 
+                                    let secondPokeCurrHp = pokemonTwoInfo.stats[0].base_stat - (abilityInfo.current.power == null ? abilityInfo.current.power = 0 : abilityInfo.current.power)
+                                
+                                    setSecondPokeHealth(secondPokeCurrHp)
+                                     console.log('Ability about to be used:',secondAbility.current)
+                                    continuedBattle += `,${pokemonInfo.name} uses ${secondAbility.current}, ${pokemonTwoInfo.name} health is now ${secondPokeCurrHp < 0 ? 0 : secondPokeCurrHp}`
+                                
+                                }
+                                
+                                setBattleHistory(()=> continuedBattle.split(','));
+                                setDoneThinking(()=>true)
+                            }
+                            
+                        }
+                        
+
+                
+            
+}, [isFightOver])
 
 
 
 useEffect(() => {
 
-    if(isBattling){
-        
+    if(isBattling){       
         pokemonBattle();
-
     }
-    // console.log('history', battleHistory)
 }, [isBattling])
 
 useEffect(() => {
-    !firstPokeHealth || !secondPokeHealth ? setIsFightOver(true) : console.log('The battle continues')
+    !firstPokeHealth || !secondPokeHealth ? setIsFightOver(true) : setIsFightOver(false)
 
 }, [firstPokeHealth,secondPokeHealth])
 

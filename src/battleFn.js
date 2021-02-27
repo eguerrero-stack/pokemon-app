@@ -8,7 +8,6 @@ export function willHit(accuracy){
 
     const hitChance = Math.floor(Math.random()  * Math.floor(100))
     debugger;
-    console.log(hitChance, accuracy)
   
 
    if(accuracy < hitChance) {
