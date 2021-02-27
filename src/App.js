@@ -5,7 +5,7 @@ import Pagination from "./Pagination"
 import Header from "./Header";
 import SearchResult from "./SearchResult";
 import axios from 'axios';
-import { Container,Card } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import {Link} from "react-router-dom";
 import "./App.css"
 
@@ -29,15 +29,10 @@ const getPokemon = function(){
   })
 .then(res => {
   setIsLoading(false);
-  console.log(res.data);
+  // console.log(res.data);
 setNextPageUrl(res.data.next);
 setPrevPageUrl(res.data.previous);
 setPokemonNames(res.data.results.map(p => p.name))
-
-
-// @TODO figure out a way to use the names of pokemons to find the image and then display it properly with each corresponding name if I want to have a list of pictures...
-//The problem is that the list api doesn't contain the sprites (images)
-//@TODO Style search result 
 
 
  },
